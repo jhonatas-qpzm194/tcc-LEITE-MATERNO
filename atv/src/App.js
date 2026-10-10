@@ -54,6 +54,10 @@ export default function App() {
   const [activeModalData, setActiveModalData] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [toastMessage, setToastMessage] = useState('');
+  
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const locations = [
     {
@@ -127,11 +131,32 @@ export default function App() {
   };
 
   const handleDownloadPDF = () => {
-    showToast('Gerando e baixando comprovante em PDF...');
+    showToast('Comprovante de Pré-triagem gerado com sucesso! Baixando...');
+    const element = document.createElement("a");
+    const file = new Blob([
+      "LAÇOS MATERNOS - COMPROVANTE DE PRÉ-TRIAGEM\n\nStatus: Aprovada nos critérios iniciais.\nRecomendação: Procure um Banco de Leite próximo para validação final."
+    ], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "comprovante-pre-triagem-lacos-maternos.txt";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    if (!userEmail) {
+      showToast('Por favor, digite seu e-mail.');
+      return;
+    }
+    setIsLoggedIn(true);
+    setIsLoginModalOpen(false);
+    showToast(`Bem-vinda de volta, ${userEmail}!`);
   };
 
   return (
     <div style={{ backgroundColor: '#fcfbf9', minHeight: '100vh', fontFamily: 'sans-serif', color: '#333', position: 'relative' }}>
+      
       {toastMessage && (
         <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#333', color: '#fff', padding: '12px 24px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 9999, fontSize: '0.9rem' }}>
           {toastMessage}
@@ -156,6 +181,29 @@ export default function App() {
         </div>
       )}
 
+      {isLoginModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ backgroundColor: '#fff', padding: '32px', borderRadius: '16px', maxWidth: '400px', width: '90%', border: '2px solid #f9a8d4', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <h2 style={{ color: '#d85a80', marginTop: 0 }}>Acessar Conta</h2>
+            <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '20px' }}>Entre para acompanhar suas doações e agendamentos.</p>
+            <form onSubmit={handleLoginSubmit}>
+              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#444' }}>E-mail:</label>
+              <input 
+                type="email" 
+                placeholder="seu-email@exemplo.com"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                style={{ width: '100%', padding: '10px', margin: '8px 0 20px 0', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+              />
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button type="submit" style={{ flex: 1, backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
+                <button type="button" onClick={() => setIsLoginModalOpen(false)} style={{ flex: 1, backgroundColor: '#f3f4f6', border: 'none', color: '#555', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 80px', backgroundColor: '#ffffff', borderBottom: '2px solid #fce7f3', boxShadow: '0 2px 10px rgba(216, 90, 128, 0.05)' }}>
         <div onClick={() => setCurrentPage('inicio')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px', borderRadius: '12px', border: '1px solid #fbcfe8', backgroundColor: '#fff5f8', transition: 'all 0.2s' }}>
           <img src={logoImg} alt="Laços Maternos" style={{ height: '52px', borderRadius: '8px', objectFit: 'contain' }} />
@@ -170,7 +218,9 @@ export default function App() {
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button onClick={() => showToast('Redirecionando para login...')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#222', fontWeight: 'bold', fontSize: '0.95rem' }}>Entrar</button>
+          <button onClick={() => isLoggedIn ? showToast(`Você já está logada como ${userEmail}`) : setIsLoginModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#222', fontWeight: 'bold', fontSize: '0.95rem' }}>
+            {isLoggedIn ? 'Minha Conta' : 'Entrar'}
+          </button>
           <button onClick={() => setCurrentPage('triagem')} style={{ backgroundColor: '#d85a80', color: '#fff', border: '2px solid #f472b6', padding: '10px 24px', borderRadius: '999px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 12px rgba(216, 90, 128, 0.2)' }}>Quero Doar</button>
         </div>
       </header>
@@ -191,7 +241,7 @@ export default function App() {
           <h1 style={{ fontSize: '2rem', color: '#d85a80', marginBottom: '20px' }}>Por que ser uma Doadora?</h1>
           <div style={{ backgroundColor: '#fff', padding: '32px', borderRadius: '16px', border: '1px solid #fbcfe8', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
             <p style={{ lineHeight: '1.6', color: '#4b5563', fontSize: '1rem' }}>
-              O leite materno é o alimento mais completo para o recém-nascido. Para bebês prematuros ou de baixo peso internados emUTIs neonatais, a doação de leite humano representa uma verdadeira chance de vida e recuperação rápida.
+              O leite materno é o alimento mais completo para o recém-nascido. Para bebês prematuros ou de baixo peso internados em UTIs neonatais, a doação de leite humano representa uma verdadeira chance de vida e recuperação rápida.
             </p>
             <button onClick={() => setCurrentPage('triagem')} style={{ marginTop: '20px', backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Quero me Cadastrar</button>
           </div>
@@ -242,23 +292,20 @@ export default function App() {
 
             <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
               <button 
-                onClick={() => { setSelectedOption(true); setCurrentStep(prev => prev < 8 ? prev + 1 : 8); }}
+                onClick={() => { setSelectedOption(true); setCurrentStep(prev => prev < 8 ? prev + 1 : 8); showToast('Resposta registrada com sucesso!'); }}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '14px', borderRadius: '12px', border: selectedOption ? '2px solid #d85a80' : '1px solid #e2e8f0', backgroundColor: selectedOption ? '#d85a80' : '#f8fafc', color: selectedOption ? '#fff' : '#334155', fontWeight: '600', cursor: 'pointer' }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 Sim, estou produzindo leite
               </button>
               <button 
                 onClick={() => { setSelectedOption(false); showToast('Agradecemos seu interesse. Doações necessitam de excedente.'); }}
                 style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '14px', borderRadius: '12px', border: !selectedOption ? '2px solid #d85a80' : '1px solid #e2e8f0', backgroundColor: !selectedOption ? '#d85a80' : '#f8fafc', color: !selectedOption ? '#fff' : '#334155', fontWeight: '600', cursor: 'pointer' }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                 Não, ainda não produzo
               </button>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f1f5f9', padding: '10px 16px', borderRadius: '8px', fontSize: '0.8rem', color: '#64748b' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
               Seu cadastro é sigiloso. O Laços Maternos apoia a privacidade de todas as mães doadoras.
             </div>
           </div>
@@ -266,7 +313,7 @@ export default function App() {
           <div style={{ backgroundColor: '#fff', border: '2px dashed #86efac', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 15px rgba(34, 197, 94, 0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
               <div style={{ width: '36px', height: '36px', backgroundColor: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                ✓
               </div>
               <div>
                 <h3 style={{ fontSize: '1.1rem', color: '#111827' }}>Pré-triagem concluída com sucesso!</h3>
@@ -292,7 +339,6 @@ export default function App() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#fff', border: '2px solid #fbcfe8', padding: '10px 16px', borderRadius: '999px', width: '260px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d85a80" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input 
                   type="text" 
                   value={searchCity} 
@@ -305,7 +351,7 @@ export default function App() {
                 {['Todos', 'Banco de Leite', 'Posto de Coleta', 'Coleta Domiciliar', 'Aberto Agora'].map((filter) => (
                   <button 
                     key={filter} 
-                    onClick={() => setSelectedFilter(filter)}
+                    onClick={() => { setSelectedFilter(filter); showToast(`Filtro aplicado: ${filter}`); }}
                     style={{ backgroundColor: selectedFilter === filter ? '#d85a80' : '#fff', color: selectedFilter === filter ? '#fff' : '#4b5563', border: selectedFilter === filter ? '2px solid #d85a80' : '2px solid #e5e7eb', padding: '8px 16px', borderRadius: '999px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
                   >
                     {filter}

@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import logoImg from './imagens/lacos maternos imagem.png';
+import './App.css';
 
 const customIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
@@ -17,7 +18,7 @@ function RealTimeMap({ points, activeIndex }) {
   const centerPos = points[activeIndex] ? [points[activeIndex].lat, points[activeIndex].lng] : [-22.8988, -47.0562];
 
   return (
-    <div style={{ width: '100%', height: '580px', borderRadius: '16px', overflow: 'hidden', border: '2px solid #f9a8d4', boxShadow: '0 10px 25px -5px rgba(216, 90, 128, 0.15)' }}>
+    <div className="map-wrapper">
       <MapContainer 
         center={centerPos} 
         zoom={12} 
@@ -155,104 +156,106 @@ export default function App() {
   };
 
   return (
-    <div style={{ backgroundColor: '#fcfbf9', minHeight: '100vh', fontFamily: 'sans-serif', color: '#333', position: 'relative' }}>
+    <div className="app-container">
       
       {toastMessage && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#333', color: '#fff', padding: '12px 24px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 9999, fontSize: '0.9rem' }}>
+        <div className="toast-notification">
           {toastMessage}
         </div>
       )}
 
       {isModalOpen && activeModalData && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#fff', padding: '28px', borderRadius: '16px', maxWidth: '450px', width: '90%', border: '2px solid #f9a8d4', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ color: '#d85a80', marginTop: 0 }}>{activeModalData.name}</h2>
-            <p style={{ color: '#666', fontSize: '0.9rem' }}>{activeModalData.sub}</p>
-            <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '16px 0' }} />
-            <p style={{ fontSize: '0.88rem', margin: '8px 0' }}><strong>Endereço:</strong> {activeModalData.address}</p>
-            <p style={{ fontSize: '0.88rem', margin: '8px 0' }}><strong>Telefone:</strong> {activeModalData.phone || 'Não informado'}</p>
-            <p style={{ fontSize: '0.88rem', margin: '8px 0' }}><strong>Horário:</strong> {activeModalData.hours}</p>
-            <p style={{ fontSize: '0.88rem', margin: '8px 0' }}><strong>Coleta Domiciliar:</strong> {activeModalData.homeCollection ? 'Sim' : 'Não'}</p>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button onClick={() => handleContact(activeModalData)} style={{ flex: 1, backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Ligar Agora</button>
-              <button onClick={() => setIsModalOpen(false)} style={{ flex: 1, backgroundColor: '#f3f4f6', border: 'none', color: '#555', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Fechar</button>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">{activeModalData.name}</h2>
+            <p className="modal-subtitle">{activeModalData.sub}</p>
+            <hr className="modal-divider" />
+            <p className="modal-text"><strong>Endereço:</strong> {activeModalData.address}</p>
+            <p className="modal-text"><strong>Telefone:</strong> {activeModalData.phone || 'Não informado'}</p>
+            <p className="modal-text"><strong>Horário:</strong> {activeModalData.hours}</p>
+            <p className="modal-text"><strong>Coleta Domiciliar:</strong> {activeModalData.homeCollection ? 'Sim' : 'Não'}</p>
+            <div className="modal-buttons">
+              <button onClick={() => handleContact(activeModalData)} className="btn-primary">Ligar Agora</button>
+              <button onClick={() => setIsModalOpen(false)} className="btn-secondary">Fechar</button>
             </div>
           </div>
         </div>
       )}
 
       {isLoginModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#fff', padding: '32px', borderRadius: '16px', maxWidth: '400px', width: '90%', border: '2px solid #f9a8d4', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ color: '#d85a80', marginTop: 0 }}>Acessar Conta</h2>
-            <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '20px' }}>Entre para acompanhar suas doações e agendamentos.</p>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Acessar Conta</h2>
+            <p className="modal-subtitle" style={{ marginBottom: '20px' }}>Entre para acompanhar suas doações e agendamentos.</p>
             <form onSubmit={handleLoginSubmit}>
-              <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#444' }}>E-mail:</label>
-              <input 
-                type="email" 
-                placeholder="seu-email@exemplo.com"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                style={{ width: '100%', padding: '10px', margin: '8px 0 20px 0', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }}
-              />
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="submit" style={{ flex: 1, backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Entrar</button>
-                <button type="button" onClick={() => setIsLoginModalOpen(false)} style={{ flex: 1, backgroundColor: '#f3f4f6', border: 'none', color: '#555', padding: '10px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Cancelar</button>
+              <div className="login-form-group">
+                <label className="login-label">E-mail:</label>
+                <input 
+                  type="email" 
+                  placeholder="seu-email@exemplo.com"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  className="login-input"
+                />
+              </div>
+              <div className="modal-buttons">
+                <button type="submit" className="btn-primary">Entrar</button>
+                <button type="button" onClick={() => setIsLoginModalOpen(false)} className="btn-secondary">Cancelar</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 80px', backgroundColor: '#ffffff', borderBottom: '2px solid #fce7f3', boxShadow: '0 2px 10px rgba(216, 90, 128, 0.05)' }}>
-        <div onClick={() => setCurrentPage('inicio')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px', borderRadius: '12px', border: '1px solid #fbcfe8', backgroundColor: '#fff5f8', transition: 'all 0.2s' }}>
-          <img src={logoImg} alt="Laços Maternos" style={{ height: '52px', borderRadius: '8px', objectFit: 'contain' }} />
+      <header className="header-container">
+        <div onClick={() => setCurrentPage('inicio')} className="logo-box">
+          <img src={logoImg} alt="Laços Maternos" className="logo-img" />
         </div>
 
-        <nav style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-          <button onClick={() => setCurrentPage('inicio')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', color: currentPage === 'inicio' ? '#d85a80' : '#555', fontWeight: currentPage === 'inicio' ? 'bold' : 'normal' }}>Início</button>
-          <button onClick={() => setCurrentPage('porque')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', color: currentPage === 'porque' ? '#d85a80' : '#555', fontWeight: currentPage === 'porque' ? 'bold' : 'normal' }}>Por que doar</button>
-          <button onClick={() => setCurrentPage('triagem')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', color: currentPage === 'triagem' ? '#d85a80' : '#555', fontWeight: currentPage === 'triagem' ? 'bold' : 'normal' }}>Como funciona</button>
-          <button onClick={() => setCurrentPage('bancos')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', color: currentPage === 'bancos' ? '#d85a80' : '#555', fontWeight: currentPage === 'bancos' ? 'bold' : 'normal' }}>Bancos de Leite</button>
-          <button onClick={() => setCurrentPage('guia')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', color: currentPage === 'guia' ? '#d85a80' : '#555', fontWeight: currentPage === 'guia' ? 'bold' : 'normal' }}>Guia da Doadora</button>
+        <nav className="nav-links">
+          <button onClick={() => setCurrentPage('inicio')} className={`nav-btn ${currentPage === 'inicio' ? 'active' : 'inactive'}`}>Início</button>
+          <button onClick={() => setCurrentPage('porque')} className={`nav-btn ${currentPage === 'porque' ? 'active' : 'inactive'}`}>Por que doar</button>
+          <button onClick={() => setCurrentPage('triagem')} className={`nav-btn ${currentPage === 'triagem' ? 'active' : 'inactive'}`}>Como funciona</button>
+          <button onClick={() => setCurrentPage('bancos')} className={`nav-btn ${currentPage === 'bancos' ? 'active' : 'inactive'}`}>Bancos de Leite</button>
+          <button onClick={() => setCurrentPage('guia')} className={`nav-btn ${currentPage === 'guia' ? 'active' : 'inactive'}`}>Guia da Doadora</button>
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button onClick={() => isLoggedIn ? showToast(`Você já está logada como ${userEmail}`) : setIsLoginModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#222', fontWeight: 'bold', fontSize: '0.95rem' }}>
+        <div className="header-actions">
+          <button onClick={() => isLoggedIn ? showToast(`Você já está logada como ${userEmail}`) : setIsLoginModalOpen(true)} className="login-btn">
             {isLoggedIn ? 'Minha Conta' : 'Entrar'}
           </button>
-          <button onClick={() => setCurrentPage('triagem')} style={{ backgroundColor: '#d85a80', color: '#fff', border: '2px solid #f472b6', padding: '10px 24px', borderRadius: '999px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 12px rgba(216, 90, 128, 0.2)' }}>Quero Doar</button>
+          <button onClick={() => setCurrentPage('triagem')} className="donate-btn">Quero Doar</button>
         </div>
       </header>
 
       {currentPage === 'inicio' && (
-        <main style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '2.5rem', color: '#d85a80', marginBottom: '16px' }}>Cada gota faz a diferença</h1>
-          <p style={{ fontSize: '1.1rem', color: '#666', maxWidth: '600px', margin: '0 auto 32px' }}>Conectamos mães doadoras a bancos de leite humano com carinho, praticidade e segurança.</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-            <button onClick={() => setCurrentPage('triagem')} style={{ backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '14px 32px', borderRadius: '999px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}>Iniciar Pré-Triagem</button>
-            <button onClick={() => setCurrentPage('bancos')} style={{ backgroundColor: '#fff', color: '#d85a80', border: '2px solid #d85a80', padding: '14px 32px', borderRadius: '999px', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer' }}>Buscar Bancos de Leite</button>
+        <main className="hero-main">
+          <h1 className="hero-title">Cada gota faz a diferença</h1>
+          <p className="hero-text">Conectamos mães doadoras a bancos de leite humano com carinho, praticidade e segurança.</p>
+          <div className="hero-buttons">
+            <button onClick={() => setCurrentPage('triagem')} className="btn-fill">Iniciar Pré-Triagem</button>
+            <button onClick={() => setCurrentPage('bancos')} className="btn-outline">Buscar Bancos de Leite</button>
           </div>
         </main>
       )}
 
       {currentPage === 'porque' && (
-        <main style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>
-          <h1 style={{ fontSize: '2rem', color: '#d85a80', marginBottom: '20px' }}>Por que ser uma Doadora?</h1>
-          <div style={{ backgroundColor: '#fff', padding: '32px', borderRadius: '16px', border: '1px solid #fbcfe8', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <p style={{ lineHeight: '1.6', color: '#4b5563', fontSize: '1rem' }}>
+        <main className="content-section">
+          <h1 className="section-title">Por que ser uma Doadora?</h1>
+          <div className="card-box">
+            <p className="card-text">
               O leite materno é o alimento mais completo para o recém-nascido. Para bebês prematuros ou de baixo peso internados em UTIs neonatais, a doação de leite humano representa uma verdadeira chance de vida e recuperação rápida.
             </p>
-            <button onClick={() => setCurrentPage('triagem')} style={{ marginTop: '20px', backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: '999px', fontWeight: 'bold', cursor: 'pointer' }}>Quero me Cadastrar</button>
+            <button onClick={() => setCurrentPage('triagem')} className="btn-fill" style={{ marginTop: '20px', padding: '12px 28px', fontSize: '1rem' }}>Quero me Cadastrar</button>
           </div>
         </main>
       )}
 
       {currentPage === 'guia' && (
-        <main style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px' }}>
-          <h1 style={{ fontSize: '2rem', color: '#d85a80', marginBottom: '20px' }}>Guia Rápido da Doadora</h1>
-          <div style={{ backgroundColor: '#fff', padding: '32px', borderRadius: '16px', border: '1px solid #fbcfe8' }}>
-            <ul style={{ paddingLeft: '20px', lineHeight: '1.8', color: '#4b5563' }}>
+        <main className="content-section">
+          <h1 className="section-title">Guia Rápido da Doadora</h1>
+          <div className="card-box">
+            <ul className="guide-list">
               <li>Higienize bem as mãos e os braços até o cotovelo.</li>
               <li>Utilize máscara e lenço para prender os cabelos.</li>
               <li>Higienize o frasco de vidro com tampa de plástico fervendo por 15 minutos.</li>
@@ -263,54 +266,54 @@ export default function App() {
       )}
 
       {currentPage === 'triagem' && (
-        <main style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 20px 80px' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <span style={{ backgroundColor: '#e8f4f0', color: '#2e7d5b', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 12px', borderRadius: '999px' }}>PASSO INICIAL ESSENCIAL</span>
-            <h1 style={{ fontSize: '2rem', marginTop: '12px', marginBottom: '8px' }}>Vamos verificar algumas informações iniciais.</h1>
-            <p style={{ color: '#666', fontSize: '0.95rem', lineHeight: '1.5' }}>
+        <main className="triagem-main">
+          <div className="triagem-header">
+            <span className="triagem-badge">PASSO INICIAL ESSENCIAL</span>
+            <h1 className="triagem-heading">Vamos verificar algumas informações iniciais.</h1>
+            <p className="triagem-subtext">
               Esta pré-triagem baseia-se nos critérios básicos estabelecidos pela ANVISA e Fiocruz. Suas respostas nos ajudam a antecipar o processo para que sua doação seja o mais ágil possível.
             </p>
           </div>
 
-          <div style={{ backgroundColor: '#fff', border: '2px dashed #f9a8d4', borderRadius: '16px', padding: '32px', marginBottom: '28px', boxShadow: '0 4px 15px rgba(216, 90, 128, 0.05)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 'bold', color: '#888', marginBottom: '16px' }}>
+          <div className="triagem-card">
+            <div className="triagem-step-header">
               <span>PERGUNTA ATUAL</span>
               <span>0{currentStep}/08</span>
             </div>
             
             {currentStep === 1 ? (
               <>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Você está amamentando ou produzindo leite excedente atualmente?</h2>
-                <p style={{ color: '#666', fontSize: '0.88rem', marginBottom: '24px' }}>Para se tornar doadora de leite humano, é necessário estar saudável e apresentar uma produção excedente de leite para oferecer aos bebês necessitados.</p>
+                <h2 className="triagem-question-title">Você está amamentando ou produzindo leite excedente atualmente?</h2>
+                <p className="triagem-question-desc">Para se tornar doadora de leite humano, é necessário estar saudável e apresentar uma produção excedente de leite para oferecer aos bebês necessitados.</p>
               </>
             ) : (
               <>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Você faz uso de algum medicamento de uso contínuo?</h2>
-                <p style={{ color: '#666', fontSize: '0.88rem', marginBottom: '24px' }}>Alguns medicamentos podem passar para o leite materno. Essa informação é analisada sigilosamente pela equipe do banco.</p>
+                <h2 className="triagem-question-title">Você faz uso de algum medicamento de uso contínuo?</h2>
+                <p className="triagem-question-desc">Alguns medicamentos podem passar para o leite materno. Essa informação é analisada sigilosamente pela equipe do banco.</p>
               </>
             )}
 
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+            <div className="triagem-options-group">
               <button 
                 onClick={() => { setSelectedOption(true); setCurrentStep(prev => prev < 8 ? prev + 1 : 8); showToast('Resposta registrada com sucesso!'); }}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '14px', borderRadius: '12px', border: selectedOption ? '2px solid #d85a80' : '1px solid #e2e8f0', backgroundColor: selectedOption ? '#d85a80' : '#f8fafc', color: selectedOption ? '#fff' : '#334155', fontWeight: '600', cursor: 'pointer' }}
+                className={selectedOption ? "triagem-option-btn-active" : "triagem-option-btn-inactive"}
               >
                 Sim, estou produzindo leite
               </button>
               <button 
                 onClick={() => { setSelectedOption(false); showToast('Agradecemos seu interesse. Doações necessitam de excedente.'); }}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '14px', borderRadius: '12px', border: !selectedOption ? '2px solid #d85a80' : '1px solid #e2e8f0', backgroundColor: !selectedOption ? '#d85a80' : '#f8fafc', color: !selectedOption ? '#fff' : '#334155', fontWeight: '600', cursor: 'pointer' }}
+                className={!selectedOption ? "triagem-option-btn-active" : "triagem-option-btn-inactive"}
               >
                 Não, ainda não produzo
               </button>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f1f5f9', padding: '10px 16px', borderRadius: '8px', fontSize: '0.8rem', color: '#64748b' }}>
+            <div className="triagem-privacy-box">
               Seu cadastro é sigiloso. O Laços Maternos apoia a privacidade de todas as mães doadoras.
             </div>
           </div>
 
-          <div style={{ backgroundColor: '#fff', border: '2px dashed #86efac', borderRadius: '16px', padding: '32px', boxShadow: '0 4px 15px rgba(34, 197, 94, 0.05)' }}>
+          <div className="triagem-success-card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
               <div style={{ width: '36px', height: '36px', backgroundColor: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 ✓
@@ -320,39 +323,39 @@ export default function App() {
                 <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>Você atende aos critérios prévios para ser uma doadora incrível de leite materno.</p>
               </div>
             </div>
-            <p style={{ color: '#4b5563', fontSize: '0.88rem', lineHeight: '1.5', marginBottom: '24px' }}>
+            <p className="card-text" style={{ fontSize: '0.88rem', marginBottom: '24px' }}>
               <strong>O que acontece agora?</strong> Suas respostas indicam que você possui grande probabilidade de estar apta a iniciar o processo de doação de forma saudável. No entanto, a confirmação oficial e o fornecimento de exames de laboratório devem ser realizados por um profissional devidamente credenciado de um Banco de Leite Humano.
             </p>
             <div style={{ display: 'flex', gap: '16px' }}>
-              <button onClick={() => setCurrentPage('bancos')} style={{ backgroundColor: '#d85a80', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: '999px', fontWeight: '600', cursor: 'pointer' }}>Encontrar Banco de Leite Próximo</button>
-              <button onClick={handleDownloadPDF} style={{ backgroundColor: 'transparent', color: '#d85a80', border: '2px solid #d85a80', padding: '10px 22px', borderRadius: '999px', fontWeight: '600', cursor: 'pointer' }}>Salvar Resultados (PDF)</button>
+              <button onClick={() => setCurrentPage('bancos')} className="btn-fill" style={{ padding: '10px 22px', fontSize: '0.9rem' }}>Encontrar Banco de Leite Próximo</button>
+              <button onClick={handleDownloadPDF} className="btn-outline" style={{ padding: '10px 22px', fontSize: '0.9rem' }}>Salvar Resultados (PDF)</button>
             </div>
           </div>
         </main>
       )}
 
       {currentPage === 'bancos' && (
-        <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 20px 80px' }}>
+        <main className="bancos-main">
           <div style={{ marginBottom: '24px' }}>
-            <span style={{ backgroundColor: '#e8f4f0', color: '#2e7d5b', fontSize: '0.75rem', fontWeight: 'bold', padding: '4px 12px', borderRadius: '999px' }}>BUSCA POR PROXIMIDADE</span>
-            <h1 style={{ fontSize: '2rem', marginTop: '12px', marginBottom: '20px' }}>Encontre um Banco de Leite</h1>
+            <span className="triagem-badge">BUSCA POR PROXIMIDADE</span>
+            <h1 className="triagem-heading">Encontre um Banco de Leite</h1>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#fff', border: '2px solid #fbcfe8', padding: '10px 16px', borderRadius: '999px', width: '260px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+            <div className="search-filter-wrapper">
+              <div className="search-input-box">
                 <input 
                   type="text" 
                   value={searchCity} 
                   onChange={(e) => setSearchCity(e.target.value)}
-                  style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', fontWeight: 'bold', color: '#333', width: '100%' }} 
+                  className="search-input" 
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="filter-buttons-group">
                 {['Todos', 'Banco de Leite', 'Posto de Coleta', 'Coleta Domiciliar', 'Aberto Agora'].map((filter) => (
                   <button 
                     key={filter} 
                     onClick={() => { setSelectedFilter(filter); showToast(`Filtro aplicado: ${filter}`); }}
-                    style={{ backgroundColor: selectedFilter === filter ? '#d85a80' : '#fff', color: selectedFilter === filter ? '#fff' : '#4b5563', border: selectedFilter === filter ? '2px solid #d85a80' : '2px solid #e5e7eb', padding: '8px 16px', borderRadius: '999px', fontSize: '0.82rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+                    className={selectedFilter === filter ? "filter-btn-active" : "filter-btn-inactive"}
                   >
                     {filter}
                   </button>
@@ -361,14 +364,14 @@ export default function App() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: '24px' }}>
+          <div className="bancos-grid">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#9ca3af' }}>{filteredLocations.length} PONTOS DE COLETA ENCONTRADOS</span>
               {filteredLocations.map((loc, idx) => (
                 <div 
                   key={idx}
                   onClick={() => setSelectedCard(idx)}
-                  style={{ backgroundColor: '#fff', border: selectedCard === idx ? '2px solid #d85a80' : '2px solid #f3f4f6', borderRadius: '16px', padding: '18px', cursor: 'pointer', boxShadow: selectedCard === idx ? '0 8px 20px rgba(216, 90, 128, 0.12)' : '0 2px 8px rgba(0,0,0,0.02)', transition: 'all 0.2s' }}
+                  className={`location-card ${selectedCard === idx ? 'selected' : 'unselected'}`}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <h4 style={{ fontSize: '0.95rem', color: '#111827', margin: 0 }}>{loc.name}</h4>
